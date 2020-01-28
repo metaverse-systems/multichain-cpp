@@ -44,6 +44,7 @@ namespace metaverse
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
 
         CURLcode res = curl_easy_perform(curl);
+        curl_slist_free_all(chunk);
         if(res) return nullptr;
 
         curl_easy_reset(curl);
