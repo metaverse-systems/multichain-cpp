@@ -1,7 +1,7 @@
 AC_PREREQ([2.69])
 AC_INIT([multichain-cpp], [0.0.1], [tim@metaverse.systems], [multichain-cpp], [https://metaverse.systems])
 LT_INIT
-AC_CONFIG_SRCDIR([src/multichain-cpp.cpp])
+AC_CONFIG_SRCDIR([src/MultiChain.cpp])
 AC_CONFIG_HEADERS([config.h])
 
 PKG_PROG_PKG_CONFIG

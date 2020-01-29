@@ -1,7 +1,7 @@
 #include <multichain-cpp/MultiChain.hpp>
 #include <curl/curl.h>
-#include <iostream>
 #include <unistd.h>
+#include <iostream>
 
 namespace metaverse
 {
@@ -14,8 +14,11 @@ namespace metaverse
         this->rpcuser = rpcuser;
         this->rpcpassword = rpcpassword;
 
-        std::cout << "Connecting to " << this->host << " on port " << this->port;
-        std::cout << " with username '" << this->rpcuser << "'" << std::endl;
+        Json::Value info = this->InfoGet();
+        this->balance = info["balance"].asFloat();
+        this->blocks = info["blocks"].asUInt();
+        this->burnaddress = info["burnaddress"].asString();
+        this->chainname = info["chainname"].asString();
     }
 
     Json::Value MultiChain::Execute(Json::Value command)
@@ -51,12 +54,17 @@ namespace metaverse
         curl_easy_cleanup(curl);
 
         Json::Value result;
+        Json::CharReaderBuilder readerBuilder;
+        Json::CharReader *reader = readerBuilder.newCharReader();
+        std::string readerErrors;
 
-        Json::Reader reader;
-        if(!reader.parse(rpc_result.c_str(), result))
+        bool parsingSuccessful = reader->parse(rpc_result.c_str(), rpc_result.c_str() + rpc_result.size(), &result, &readerErrors);
+        delete reader;
+
+        if(!parsingSuccessful)
         {
             std::string err = "Couldn't parse response: " + rpc_result + "\n";
-            err += reader.getFormattedErrorMessages();
+            err += readerErrors;
             throw std::runtime_error(err);
         }
 
@@ -92,5 +100,19 @@ namespace metaverse
         }
 
         return this->StreamGet(name);
+    }
+
+    Json::Value MultiChain::InfoGet()
+    {
+        Json::Value command;
+        command["method"] = "getinfo";
+
+        Json::Value result = this->Execute(command);
+        if(!result["error"].isNull())
+        {
+            throw std::runtime_error(result["error"]["message"].asString());
+        }
+
+        return result["result"];
     }
 }

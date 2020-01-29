@@ -48,4 +48,42 @@ namespace metaverse
     {
         return Item::createItemObject(this, key);
     }
+
+    std::vector<std::string> Stream::keys_get(Json::Value keys)
+    {
+        Json::Value command;
+        command["method"] = "liststreamkeys";
+        command["params"] = Json::arrayValue;
+        command["params"].append(this->name);
+        command["params"].append(keys);
+
+        Json::Value result = this->chain->Execute(command);
+        if(!result["error"].isNull())
+        {
+            throw std::runtime_error(result["error"]["message"].asString());
+        }
+
+        std::cout << result << std::endl;
+
+        std::vector<std::string> streamkeys;
+
+        return streamkeys;
+    }
+
+    std::vector<std::string> Stream::KeysGet(std::vector<std::string> keys)
+    {
+        Json::Value keys_array = Json::arrayValue;
+        for(auto k : keys) keys_array.append(k);
+
+        if(!keys.size()) keys_array = "*";
+
+        return this->keys_get(keys_array);
+    }
+
+    std::vector<std::string> Stream::KeysGet()
+    {
+        Json::Value keys_array = "*";
+
+        return this->keys_get(keys_array);
+    }
 }

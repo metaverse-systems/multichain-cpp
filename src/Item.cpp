@@ -1,5 +1,4 @@
 #include <multichain-cpp/Item.hpp>
-#include <iostream>
 
 namespace metaverse
 {
@@ -15,16 +14,11 @@ namespace metaverse
         command["params"].append(this->key);
         command["params"].append(false);
 
-std::cout << command << std::endl;
-
         Json::Value result = this->stream->chain->Execute(command);
         if(!result["error"].isNull())
         {
-            std::cout << result << std::endl;
             throw std::runtime_error(result["error"]["message"].asString());
         }
-
-        std::cout << result << std::endl;
     }
 
     Item Item::createItemObject(Stream *stream, std::string key)

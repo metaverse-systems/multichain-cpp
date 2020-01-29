@@ -1,5 +1,6 @@
 #include <multichain-cpp/multichain-cpp.hpp>
 #include <iostream>
+#include <fstream>
 
 using namespace metaverse;
 
@@ -17,20 +18,55 @@ std::string bin2hex(const std::string& input)
     return res;
 }
 
+const std::vector<std::string> explode(const std::string &s, const char &c)
+{
+    std::string buff{""};
+    std::vector<std::string> v;
+
+    for(auto n:s)
+    {
+        if(n != c) buff+=n; else
+        if(n == c && buff != "") { v.push_back(buff); buff = ""; }
+    }
+    if(buff != "") v.push_back(buff);
+
+    return v;
+}
+
+Json::Value parseConf(std::string filename)
+{
+    std::string data;
+    std::ifstream file;
+    std::streampos fsize, fstart = 0;
+
+    file.open(filename);
+    fstart = file.tellg();
+    file.seekg(0, std::ios::end);
+    fsize = file.tellg() - fstart;
+    file.seekg(0, std::ios::beg);
+    data.resize(fsize);
+    file.read(&data[0], fsize);
+    file.close();
+
+    Json::Value results;
+
+    for(auto line : explode(data, '\n'))
+    {
+        auto option = explode(line, '=');
+        results[option[0]] = option[1];
+    }
+
+    return results;
+}
+
 int main(int argc, char *argv[])
 {
-    MultiChain test("localhost", 9740, "multichainrpc", "CjuusA3dwCPjWQmTiWCFdRvnubCnrpiJEcUZzRTpwL1r");
+    std::string home = std::string(getenv("HOME"));
+    Json::Value credentials = parseConf(home + "/.multichain/clarion/multichain.conf");
 
-    Json::Value command;
-    command["method"] = "liststreams";
-    command["params"] = Json::arrayValue;
+    MultiChain clarion("localhost", 9740, credentials["rpcuser"].asString(), credentials["rpcpassword"].asString());
 
-//    Json::Value result = test.Execute(command);
-//    std::cout << result << std::endl;
+    std::cout << "Number of blocks: " << clarion.blocks << std::endl;
 
-    Stream stream = test.StreamGet("Name stream");
-    std::cout << stream.name << std::endl;
-
-    Item i = stream.ItemGet("1");
     return 0;
 }
