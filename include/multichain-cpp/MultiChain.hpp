@@ -16,6 +16,7 @@ namespace metaverse
         Stream StreamGet(std::string name);
         Stream StreamCreate(std::string name);
         Json::Value InfoGet();
+        void InfoDump(void);
 
         float balance;
         size_t blocks;

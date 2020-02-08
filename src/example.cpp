@@ -64,9 +64,19 @@ int main(int argc, char *argv[])
     std::string home = std::string(getenv("HOME"));
     Json::Value credentials = parseConf(home + "/.multichain/clarion/multichain.conf");
 
-    MultiChain clarion("localhost", 9740, credentials["rpcuser"].asString(), credentials["rpcpassword"].asString());
+    MultiChain *clarion = nullptr;
 
-    std::cout << "Number of blocks: " << clarion.blocks << std::endl;
+    try
+    {
+        clarion = new MultiChain("localhost", 9740, credentials["rpcuser"].asString(), credentials["rpcpassword"].asString());
+    }
+    catch(std::runtime_error &e)
+    {
+        std::cerr << e.what() << std::endl;
+        return -1;
+    }
+
+    clarion->InfoDump();
 
     return 0;
 }

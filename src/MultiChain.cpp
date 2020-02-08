@@ -19,6 +19,10 @@ namespace metaverse
         this->blocks = info["blocks"].asUInt();
         this->burnaddress = info["burnaddress"].asString();
         this->chainname = info["chainname"].asString();
+        this->connections = info["connections"].asUInt();
+        this->description = info["description"].asString();
+        this->difficulty = info["difficulty"].asFloat();
+        this->edition = info["edition"].asString();
     }
 
     Json::Value MultiChain::Execute(Json::Value command)
@@ -48,10 +52,15 @@ namespace metaverse
 
         CURLcode res = curl_easy_perform(curl);
         curl_slist_free_all(chunk);
-        if(res) return nullptr;
 
         curl_easy_reset(curl);
         curl_easy_cleanup(curl);
+
+        if(res)
+        {
+            std::string message(curl_easy_strerror(res));
+            throw std::runtime_error(message);
+        }
 
         Json::Value result;
         Json::CharReaderBuilder readerBuilder;
@@ -114,5 +123,17 @@ namespace metaverse
         }
 
         return result["result"];
+    }
+
+    void MultiChain::InfoDump()
+    {
+        std::cout << "Balance: " << this->balance << std::endl;
+        std::cout << "Blocks: " << this->blocks << std::endl;
+        std::cout << "Burn address: " << this->burnaddress << std::endl;
+        std::cout << "Chain name: " << this->chainname << std::endl;
+        std::cout << "Number of connections: " << this->connections << std::endl;
+        std::cout << "Description: " << this->description << std::endl;
+        std::cout << "Difficulty: " << this->difficulty << std::endl;
+        std::cout << "Edition: " << this->edition << std::endl;
     }
 }
