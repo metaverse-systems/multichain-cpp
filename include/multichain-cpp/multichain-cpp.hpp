@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../config.h"
-#include "MultiChain.hpp"
-#include "Stream.hpp"
-#include "Item.hpp"
+#include <multichain-cpp/MultiChain.hpp>
+#include <multichain-cpp/Stream.hpp>
+#include <multichain-cpp/Item.hpp>

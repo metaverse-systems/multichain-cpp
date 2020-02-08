@@ -3,7 +3,8 @@ lib_LTLIBRARIES = libmultichain-cpp.la
 pkginclude_HEADERS = \
     ../include/multichain-cpp/multichain-cpp.hpp \
     ../include/multichain-cpp/MultiChain.hpp \
-    ../include/multichain-cpp/Stream.hpp
+    ../include/multichain-cpp/Stream.hpp \
+    ../include/multichain-cpp/Item.hpp
     
 
 libmultichain_cpp_la_CXXFLAGS = -std=c++17 -Werror -Wall -I../include $(JSONCPP_CFLAGS) $(CURL_FLAGS)

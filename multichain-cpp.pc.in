@@ -8,4 +8,4 @@ Description: C++ library for access MultiChain daemon
 Version: @PACKAGE_VERSION@
 Libs: -L${libdir} -lmultichain-cpp
 Cflags: -I${includedir}
-Requires: jsoncpp
+Requires: jsoncpp libcurl
